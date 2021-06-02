@@ -1,30 +1,22 @@
 package br.com.mercadolivre.desafiospring.dto;
 
-public class ResponseDTO<T> {
-    private T data;
-    private String erros;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    public ResponseDTO(T data) {
-        this.data = data;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ResponseDTO {
+    private String errors;
+
+    public ResponseDTO() {}
+
+    public ResponseDTO(String errors) {
+        this.errors = errors;
     }
 
-    public ResponseDTO(String erros) {
-        this.erros = erros;
+    public String getErrors() {
+        return errors;
     }
 
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public String getErros() {
-        return erros;
-    }
-
-    public void setErros(String erros) {
-        this.erros = erros;
+    public void setErrors(String errors) {
+        this.errors = errors;
     }
 }

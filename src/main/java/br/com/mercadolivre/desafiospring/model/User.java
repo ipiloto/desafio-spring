@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name="users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usersFollowing"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "followedUsers", "posts"})
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -16,13 +16,23 @@ public class User {
 
     private String name;
 
+    private boolean isSeller;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="user_follows",
-            joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_followed", referencedColumnName = "id"))
-    private List<User> usersFollowing = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "user_following", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_user", referencedColumnName = "id"))
+    private List<User> followedUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
 
     public User() {
+    }
+
+    public User(String name, boolean isSeller) {
+        this.name = name;
+        this.isSeller = isSeller;
     }
 
     public User(String name) {
@@ -45,11 +55,27 @@ public class User {
         this.name = name;
     }
 
-    public List<User> getUsersFollowing() {
-        return usersFollowing;
+    public List<User> getFollowedUsers() {
+        return followedUsers;
     }
 
-    public void setUsersFollowing(List<User> usersFollowing) {
-        this.usersFollowing = usersFollowing;
+    public void setFollowedUsers(List<User> followedUsers) {
+        this.followedUsers = followedUsers;
+    }
+
+    public boolean isSeller() {
+        return isSeller;
+    }
+
+    public void setSeller(boolean seller) {
+        isSeller = seller;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 }

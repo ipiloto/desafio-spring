@@ -1,7 +1,7 @@
 package br.com.mercadolivre.desafiospring.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name="posts")
@@ -11,10 +11,15 @@ public class Post {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "detail")
     private Product detail;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private Date date;
-    private String category;
+    private Integer category;
     private Double price;
     private Boolean hasPromo;
     private Double discount;
@@ -22,9 +27,11 @@ public class Post {
     public Post() {
     }
 
-    public Post(Product detail, Date date, String category, Double price, Boolean hasPromo, Double discount) {
+    public Post(Long id, User user, Product detail, Date date, Integer category, Double price, Boolean hasPromo, Double discount) {
+        this.id = id;
+        this.user = user;
         this.detail = detail;
-        this.date = date;
+        setDate(date);
         this.category = category;
         this.price = price;
         this.hasPromo = hasPromo;
@@ -52,14 +59,14 @@ public class Post {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        if (date == null) this.date = new Date(); else this.date = date;
     }
 
-    public String getCategory() {
+    public Integer getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Integer category) {
         this.category = category;
     }
 
@@ -85,5 +92,13 @@ public class Post {
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

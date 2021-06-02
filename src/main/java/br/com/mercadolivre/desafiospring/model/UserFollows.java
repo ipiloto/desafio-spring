@@ -10,31 +10,31 @@ public class UserFollows implements Serializable {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "user", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "user_following", referencedColumnName = "id")
+    private User userFollowing;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "user_followed", referencedColumnName = "id")
-    private User userFollow;
+    @JoinColumn(name = "followed_user", referencedColumnName = "id")
+    private User followedUser;
 
     public UserFollows() {
     }
 
-    public User getUser() {
-        return user;
+    public User getUserFollowing() {
+        return userFollowing;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserFollowing(User userFollowing) {
+        this.userFollowing = userFollowing;
     }
 
-    public User getUserFollow() {
-        return userFollow;
+    public User getFollowedUser() {
+        return followedUser;
     }
 
-    public void setUserFollow(User userFollow) {
-        this.userFollow = userFollow;
+    public void setFollowedUser(User followedUser) {
+        this.followedUser = followedUser;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class UserFollows implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserFollows that = (UserFollows) o;
-        return Objects.equals(user, that.user) &&
-                Objects.equals(userFollow, that.userFollow);
+        return Objects.equals(userFollowing, that.userFollowing) &&
+                Objects.equals(followedUser, that.followedUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, userFollow);
+        return Objects.hash(userFollowing, followedUser);
     }
 }

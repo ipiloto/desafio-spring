@@ -10,10 +10,10 @@ CREATE TABLE users (
 );
 
 CREATE TABLE user_follows(
-    user INT NOT NULL,
-    user_followed INT NOT NULL,
-    foreign key (user) references users(id),
-    foreign key (user_followed) references users(id)
+    user_following INT NOT NULL,
+    followed_user INT NOT NULL,
+    foreign key (user_following) references users(id),
+    foreign key (followed_user) references users(id)
 );
 
 CREATE TABLE products (
@@ -27,11 +27,13 @@ CREATE TABLE products (
 
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
     detail INT NOT NULL,
     date DATE NOT NULL,
     category INT NOT NULL,
     price DOUBLE NOT NULL,
     hasPromo BOOLEAN DEFAULT false,
     discount double,
+    foreign key (user_id) references users(id),
     foreign key (detail) references products(id)
 );

@@ -1,46 +1,40 @@
-package br.com.mercadolivre.desafiospring.model;
+package br.com.mercadolivre.desafiospring.dto;
 
-import javax.persistence.*;
+public class ProductDTO extends ResponseDTO{
 
-@Entity
-@Table(name="products")
-public class Product {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
-
-    private String name;
+    private Long product_id;
+    private String productName;
     private String type;
     private String brand;
     private String color;
     private String notes;
 
-    public Product() {
+    public ProductDTO() {
     }
 
-    public Product(Long id, String name, String type, String brand, String color, String notes) {
-        this.id = id;
-        this.name = name;
+    public ProductDTO(Long product_id, String productName, String type, String brand, String color, String notes) {
+        this.product_id = product_id;
+        this.productName = productName;
         this.type = type;
         this.brand = brand;
         this.color = color;
         this.notes = notes;
     }
 
-    public Long getId() {
-        return id;
+    public Long getProduct_id() {
+        return product_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setProduct_id(Long product_id) {
+        this.product_id = product_id;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getType() {
