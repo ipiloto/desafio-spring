@@ -1,8 +1,10 @@
 package br.com.mercadolivre.desafiospring.service;
 
-import br.com.mercadolivre.desafiospring.Exception.UserIsNotASellerException;
-import br.com.mercadolivre.desafiospring.Exception.UserNotFoundException;
+import br.com.mercadolivre.desafiospring.dto.UserPostsDTO;
+import br.com.mercadolivre.desafiospring.exception.UserIsNotASellerException;
+import br.com.mercadolivre.desafiospring.exception.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.dto.UserFollowersDTO;
+import br.com.mercadolivre.desafiospring.mappers.ProductMapper;
 import br.com.mercadolivre.desafiospring.mappers.UserMapper;
 import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.repository.UserRepository;
@@ -34,6 +36,15 @@ public class UserService {
         User userToFollow = findValidatingUser(userIdToFollow, true);
         if (user.getFollowedUsers().contains(userToFollow)) return;
         user.getFollowedUsers().add(userToFollow);
+        userRepository.save(user);
+    }
+
+    public void unfollow(Long userId, Long userIdToFollow) throws UserIsNotASellerException, UserNotFoundException {
+        if (userId.equals(userIdToFollow)) return;
+        User user = findValidatingUser(userId, false);
+        User userToUnfollow = findValidatingUser(userIdToFollow, true);
+        if (!user.getFollowedUsers().contains(userToUnfollow)) return;
+        user.getFollowedUsers().remove(userToUnfollow);
         userRepository.save(user);
     }
 

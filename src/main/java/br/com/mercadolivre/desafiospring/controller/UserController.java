@@ -27,6 +27,17 @@ public class UserController {
         }
     }
 
+    @PostMapping
+    @RequestMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    public ResponseEntity unFollow(@PathVariable Long userId, @PathVariable Long userIdToUnfollow ){
+        try {
+            userService.unfollow(userId, userIdToUnfollow);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
     @GetMapping
     @RequestMapping("/{userId}/followers/count")
     public ResponseEntity countFollowers(@PathVariable Long userId){

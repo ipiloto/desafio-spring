@@ -1,4 +1,4 @@
-package br.com.mercadolivre.desafiospring.Exception;
+package br.com.mercadolivre.desafiospring.exception;
 
 public class UserIsNotASellerException extends Exception {
 

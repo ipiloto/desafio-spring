@@ -38,8 +38,8 @@ public abstract class ProductMapper {
         return new ProductDTO(product.getId(), product.getName(), product.getType(), product.getBrand(), product.getColor(), product.getNotes());
     }
 
-    public static UserPostsDTO userPostsToUserPostsDTO(User user) {
-        return new UserPostsDTO(user.getId(), postsToPostDTOList(user.getPosts()));
+    public static UserPostsDTO userPostsToUserPostsDTO(Long userId, List<Post> posts) {
+        return new UserPostsDTO(userId, postsToPostDTOList(posts));
     }
 
 }
