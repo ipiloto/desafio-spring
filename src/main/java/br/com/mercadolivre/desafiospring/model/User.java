@@ -16,7 +16,7 @@ public class User {
 
     private String name;
 
-    private boolean isSeller = true;
+    private boolean isSeller;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="user_follows",

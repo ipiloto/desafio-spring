@@ -1,13 +1,13 @@
 package br.com.mercadolivre.desafiospring.service;
 
-import br.com.mercadolivre.desafiospring.dto.UserPostsDTO;
+import br.com.mercadolivre.desafiospring.dto.UserDTO;
 import br.com.mercadolivre.desafiospring.exception.UserIsNotASellerException;
 import br.com.mercadolivre.desafiospring.exception.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.dto.UserFollowersDTO;
-import br.com.mercadolivre.desafiospring.mappers.ProductMapper;
 import br.com.mercadolivre.desafiospring.mappers.UserMapper;
 import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.repository.UserRepository;
+import br.com.mercadolivre.desafiospring.util.SortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +18,6 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
-
-    //only for tests
-    public Iterable<User> populateUsersTest() {
-        User user = new User("Teste1");
-        User user2 = new User("Teste2");
-        user = userRepository.save(user);
-        user2 = userRepository.save(user2);
-        user.getFollowedUsers().add(user2);
-        userRepository.save(user);
-        return userRepository.findAll();
-    }
 
     public void follow(Long userId, Long userIdToFollow) throws UserIsNotASellerException, UserNotFoundException {
         if (userId.equals(userIdToFollow)) return;
@@ -54,18 +43,19 @@ public class UserService {
         return UserMapper.userToUserFollowersDTO(user, followersCount);
     }
 
-    public UserFollowersDTO listUserFollowers(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+    public UserFollowersDTO listUserFollowers(Long userId, String[] order) throws UserIsNotASellerException, UserNotFoundException {
         User user = findValidatingUser(userId, true);
-        List<User> followers = userRepository.findAllUserFollowsByFollowedUsersId(user.getId());
+        List<User> followers = userRepository.findFollowingUsersByFollowedUserId(user.getId(), SortUtil.sortStringToSort(order));
         UserFollowersDTO userFollowersDTO = UserMapper.userToUserFollowersDTO(user, null);
         userFollowersDTO.setFollowers(UserMapper.usersToUserFollowersDTOList(followers));
         return userFollowersDTO;
     }
 
-    public UserFollowersDTO listFollowedUsers(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+    public UserFollowersDTO listFollowedUsers(Long userId, String[] order) throws UserIsNotASellerException, UserNotFoundException {
         User user = findValidatingUser(userId, false);
+        List<User> followedUsers = userRepository.findFollowedUsersByUserFollowingId(user.getId(), SortUtil.sortStringToSort(order));
         UserFollowersDTO userFollowersDTO = UserMapper.userToUserFollowersDTO(user, null);
-        userFollowersDTO.setFollowed(UserMapper.usersToUserFollowersDTOList(user.getFollowedUsers()));
+        userFollowersDTO.setFollowed(UserMapper.usersToUserFollowersDTOList(followedUsers));
         return userFollowersDTO;
     }
 
@@ -75,4 +65,14 @@ public class UserService {
         return user;
     }
 
+    public void makeSellerProfile(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = findValidatingUser(userId, false);
+        user.setSeller(true);
+        userRepository.save(user);
+    }
+
+    public Iterable<UserDTO> createUsers(List<UserDTO> usersToCreate) {
+        userRepository.saveAll(UserMapper.usersDTOtoUsersList(usersToCreate));
+        return UserMapper.usersToUsersDTOList((List<User>) userRepository.findAll());
+    }
 }

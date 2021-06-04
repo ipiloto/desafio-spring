@@ -40,9 +40,9 @@ public class ProductController {
 
     @GetMapping
     @RequestMapping("/followed/{userId}/list")
-    public ResponseEntity listFollowedUsersPostsLastTwoWeeks(@PathVariable Long userId){
+    public ResponseEntity listFollowedUsersPostsLastTwoWeeks(@PathVariable Long userId, @RequestParam(defaultValue = "date_desc") String[] order){
         try {
-            UserPostsDTO userPostsDTO = productService.listFollowedUsersPostsLastTwoWeeks(userId);
+            UserPostsDTO userPostsDTO = productService.listFollowedUsersPostsLastTwoWeeks(userId, order);
             return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));

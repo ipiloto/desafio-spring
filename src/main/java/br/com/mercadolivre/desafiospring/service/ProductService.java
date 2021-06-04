@@ -8,6 +8,7 @@ import br.com.mercadolivre.desafiospring.model.Post;
 import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.repository.PostRepository;
 import br.com.mercadolivre.desafiospring.repository.ProductRepository;
+import br.com.mercadolivre.desafiospring.util.SortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class ProductService {
         return ProductMapper.userPostsToUserPostsDTO(user.getId(), user.getPosts());
     }
 
-    public UserPostsDTO listFollowedUsersPostsLastTwoWeeks(Long userId) throws UserNotFoundException, UserIsNotASellerException {
+    public UserPostsDTO listFollowedUsersPostsLastTwoWeeks(Long userId, String[] order) throws UserNotFoundException, UserIsNotASellerException {
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
 
@@ -53,7 +54,8 @@ public class ProductService {
 
         User user = userService.findValidatingUser(userId, false);
 
-        List<Post> postsLastTwoWeeks = postRepository.findAllPostsByUserFollowedUsersAndDateBetween(user.getId(), twoWeeksBefore, today);
+        List<Post> postsLastTwoWeeks = postRepository.findAllPostsByUserFollowedUsersAndDateBetween(user.getId(), twoWeeksBefore, today,
+                SortUtil.sortStringToSort(order));
 
         return ProductMapper.userPostsToUserPostsDTO(user.getId(), postsLastTwoWeeks);
     }
