@@ -1,7 +1,9 @@
 package br.com.mercadolivre.desafiospring.service;
 
+import br.com.mercadolivre.desafiospring.Exception.UserIsNotASellerException;
 import br.com.mercadolivre.desafiospring.Exception.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.dto.*;
+import br.com.mercadolivre.desafiospring.mappers.ProductMapper;
 import br.com.mercadolivre.desafiospring.model.Post;
 import br.com.mercadolivre.desafiospring.model.Product;
 import br.com.mercadolivre.desafiospring.model.User;
@@ -24,12 +26,12 @@ public class ProductService {
     PostRepository postRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
-    public void newPost(PostDTO productPostDTO) throws UserNotFoundException {
-        User user = userRepository.findById(productPostDTO.getUserId()).orElseThrow(() -> new UserNotFoundException("Usuário informado não existe"));
+    public void newPost(PostDTO productPostDTO) throws UserNotFoundException, UserIsNotASellerException {
+        User user = userService.findValidatingUser(productPostDTO.getUserId(), true);
 
-        Post post = postDTOtoPost(productPostDTO, user);
+        Post post = ProductMapper.postDTOtoPost(productPostDTO, user);
 
         if(post.getDetail().getId() == null || !productRepository.existsById(post.getDetail().getId())) post.getDetail().setId(null);
         productRepository.save(post.getDetail());
@@ -38,38 +40,15 @@ public class ProductService {
         postRepository.save(post);
     }
 
-    private Post postDTOtoPost(PostDTO productPostDTO, User user){
-        Product product = productDTOtoProduct(productPostDTO.getDetail());
-
-        return new Post(productPostDTO.getId_post(), user, product, productPostDTO.getDate(), productPostDTO.getCategory(),
-                productPostDTO.getPrice(), null, null );
+    public UserPostsDTO listUserPosts(Long userPostId) throws UserNotFoundException, UserIsNotASellerException {
+        User user = userService.findValidatingUser(userPostId, true);
+        return ProductMapper.userPostsToUserPostsDTO(user);
     }
 
-    private Product productDTOtoProduct(ProductDTO productDTO){
-        return new Product(productDTO.getProduct_id(), productDTO.getProductName(), productDTO.getType(),
-                productDTO.getBrand(), productDTO.getColor(), productDTO.getNotes());
+    public UserPostsDTO listFollowedUsersPostsLastTwoWeeks(Long userId) throws UserNotFoundException, UserIsNotASellerException {
+        User user = userService.findValidatingUser(userId, true);
+
+        return ProductMapper.userPostsToUserPostsDTO(user);
     }
 
-    private PostDTO postToPostDTO(Post post){
-        return new PostDTO(post.getUser().getId(), post.getId(), post.getDate(), productToProductDTO(post.getDetail()), post.getCategory(), post.getPrice());
-    }
-
-    private List<PostDTO> postsToPostDTOList(List<Post> posts){
-        List<PostDTO> postDTOList = new ArrayList<>();
-        posts.forEach(post -> postDTOList.add(postToPostDTO(post)));
-        return postDTOList;
-    }
-
-    private ProductDTO productToProductDTO(Product product){
-        return new ProductDTO(product.getId(), product.getName(), product.getType(), product.getBrand(), product.getColor(), product.getNotes());
-    }
-
-    public UserPostsDTO listFollowedUserPosts(Long userId) throws UserNotFoundException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Usuário informado não existe"));
-        return userPostsToUserPostsDTO(user);
-    }
-
-    private UserPostsDTO userPostsToUserPostsDTO(User user) {
-        return new UserPostsDTO(user.getId(), postsToPostDTOList(user.getPosts()));
-    }
 }

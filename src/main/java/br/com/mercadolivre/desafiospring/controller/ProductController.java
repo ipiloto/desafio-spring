@@ -28,10 +28,21 @@ public class ProductController {
     }
 
     @GetMapping
-    @RequestMapping("/followed/{userId}/list")
-    public ResponseEntity listFollowedUserPosts(@PathVariable Long userId){
+    @RequestMapping("/posts/{userPostId}/list")
+    public ResponseEntity listUserPosts(@PathVariable Long userPostId){
         try {
-            UserPostsDTO userPostsDTO = productService.listFollowedUserPosts(userId);
+            UserPostsDTO userPostsDTO = productService.listUserPosts(userPostId);
+            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping
+    @RequestMapping("/followed/{userId}/list")
+    public ResponseEntity listFollowedUsersPostsLastTwoWeeks(@PathVariable Long userId){
+        try {
+            UserPostsDTO userPostsDTO = productService.listFollowedUsersPostsLastTwoWeeks(userId);
             return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));

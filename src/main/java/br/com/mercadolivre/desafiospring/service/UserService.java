@@ -1,12 +1,14 @@
 package br.com.mercadolivre.desafiospring.service;
 
+import br.com.mercadolivre.desafiospring.Exception.UserIsNotASellerException;
+import br.com.mercadolivre.desafiospring.Exception.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.dto.UserFollowersDTO;
+import br.com.mercadolivre.desafiospring.mappers.UserMapper;
 import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,56 +28,40 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean follow(Long userId, Long userIdToFollow) {
-        if (userId.equals(userIdToFollow)) return true;
-        try {
-            if(userRepository.existsById(userId) && userRepository.existsById(userIdToFollow)){
-                User user = userRepository.findById(userId).orElseThrow();
-                User userToFollow = userRepository.findById(userIdToFollow).orElseThrow();
-                if (user.getFollowedUsers().contains(userToFollow)) return true;
-                user.getFollowedUsers().add(userToFollow);
-                userRepository.save(user);
-                return true;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
+    public void follow(Long userId, Long userIdToFollow) throws UserIsNotASellerException, UserNotFoundException {
+        if (userId.equals(userIdToFollow)) return;
+        User user = findValidatingUser(userId, false);
+        User userToFollow = findValidatingUser(userIdToFollow, true);
+        if (user.getFollowedUsers().contains(userToFollow)) return;
+        user.getFollowedUsers().add(userToFollow);
+        userRepository.save(user);
     }
 
-    public UserFollowersDTO countFollowers(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return null;
+    public UserFollowersDTO countFollowers(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = findValidatingUser(userId, true);
         long followersCount = userRepository.countFollowersByUserFollowed(user.getId());
-        return userToUserFollowersDTO(user, followersCount);
+        return UserMapper.userToUserFollowersDTO(user, followersCount);
     }
 
-    public UserFollowersDTO listUserFollowers(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return null;
+    public UserFollowersDTO listUserFollowers(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = findValidatingUser(userId, true);
         List<User> followers = userRepository.findAllUserFollowsByFollowedUsersId(user.getId());
-        UserFollowersDTO userFollowersDTO = userToUserFollowersDTO(user, null);
-        userFollowersDTO.setFollowers(usersToUserFollowersDTOList(followers));
+        UserFollowersDTO userFollowersDTO = UserMapper.userToUserFollowersDTO(user, null);
+        userFollowersDTO.setFollowers(UserMapper.usersToUserFollowersDTOList(followers));
         return userFollowersDTO;
     }
 
-    public UserFollowersDTO listFollowedUsers(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return null;
-        UserFollowersDTO userFollowersDTO = userToUserFollowersDTO(user, null);
-        userFollowersDTO.setFollowed(usersToUserFollowersDTOList(user.getFollowedUsers()));
+    public UserFollowersDTO listFollowedUsers(Long userId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = findValidatingUser(userId, false);
+        UserFollowersDTO userFollowersDTO = UserMapper.userToUserFollowersDTO(user, null);
+        userFollowersDTO.setFollowed(UserMapper.usersToUserFollowersDTOList(user.getFollowedUsers()));
         return userFollowersDTO;
     }
 
-    private List<UserFollowersDTO> usersToUserFollowersDTOList(List<User> userList){
-        List<UserFollowersDTO> userFollowersDTOList = new ArrayList<>();
-        userList.forEach( user -> {
-            userFollowersDTOList.add(userToUserFollowersDTO(user, null));
-        });
-        return userFollowersDTOList;
+    public User findValidatingUser(Long userId, boolean needToBeSeller) throws UserNotFoundException, UserIsNotASellerException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("The User informed does not exist."));
+        if(needToBeSeller && !user.isSeller()) throw new UserIsNotASellerException("The user is not a seller.");
+        return user;
     }
 
-    private UserFollowersDTO userToUserFollowersDTO(User user, Long followers_count){
-        return new UserFollowersDTO(user.getId(), user.getName(), followers_count);
-    }
 }

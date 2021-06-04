@@ -4,19 +4,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseDTO {
-    private String errors;
+    private String error;
 
     public ResponseDTO() {}
 
-    public ResponseDTO(String errors) {
-        this.errors = errors;
+    public ResponseDTO(String error) {
+        this.error = error;
     }
 
-    public String getErrors() {
-        return errors;
+    public String getError() {
+        return error;
     }
 
-    public void setErrors(String errors) {
-        this.errors = errors;
+    public void setError(String error) {
+        this.error = error;
     }
 }

@@ -1,5 +1,6 @@
 package br.com.mercadolivre.desafiospring.controller;
 
+import br.com.mercadolivre.desafiospring.dto.ResponseDTO;
 import br.com.mercadolivre.desafiospring.dto.UserFollowersDTO;
 import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.service.UserService;
@@ -18,28 +19,45 @@ public class UserController {
     @PostMapping
     @RequestMapping("/{userId}/follow/{userIdToFollow}")
     public ResponseEntity follow(@PathVariable Long userId, @PathVariable Long userIdToFollow ){
-        return userService.follow(userId, userIdToFollow) ? null : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        try {
+            userService.follow(userId, userIdToFollow);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
     }
 
     @GetMapping
     @RequestMapping("/{userId}/followers/count")
-    public ResponseEntity<UserFollowersDTO> countFollowers(@PathVariable Long userId){
-        UserFollowersDTO responseDTO = userService.countFollowers(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    public ResponseEntity countFollowers(@PathVariable Long userId){
+        try {
+            UserFollowersDTO responseDTO = userService.countFollowers(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
     }
 
     @GetMapping
     @RequestMapping("/{userId}/followers/list")
-    public ResponseEntity<UserFollowersDTO> listFollowers(@PathVariable Long userId){
-        UserFollowersDTO responseDTO = userService.listUserFollowers(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    public ResponseEntity listFollowers(@PathVariable Long userId){
+        try {
+            UserFollowersDTO responseDTO = userService.listUserFollowers(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
     }
 
     @GetMapping
     @RequestMapping("/{userId}/followed/list")
-    public ResponseEntity<UserFollowersDTO> listFollowedUsers(@PathVariable Long userId){
-        UserFollowersDTO responseDTO = userService.listFollowedUsers(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    public ResponseEntity listFollowedUsers(@PathVariable Long userId){
+        try {
+            UserFollowersDTO responseDTO = userService.listFollowedUsers(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
     }
 
     @PostMapping
