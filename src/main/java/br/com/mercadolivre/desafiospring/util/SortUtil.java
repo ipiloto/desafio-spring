@@ -26,7 +26,7 @@ public abstract class SortUtil {
             }
             return Sort.by(orders);
         }catch (Exception e) {
-            throw new SortUtilException("Error in sort parameters interpretation.");
+            throw new SortUtilException("Error in order parameters interpretation.");
         }
     }
 

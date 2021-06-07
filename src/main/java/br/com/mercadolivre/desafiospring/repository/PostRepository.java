@@ -15,4 +15,7 @@ public interface PostRepository extends CrudRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN UserFollows uf ON p.user = uf.followedUser WHERE uf.userFollowing.id = ?1 AND p.date BETWEEN ?2 AND ?3")
     List<Post> findAllPostsByUserFollowedUsersAndDateBetween(Long userId, Date startDate, Date endDate, Sort sort);
 
+    List<Post> findAllByUserIdAndHasPromoTrue(Long userPostId);
+
+    Integer countByUserIdAndHasPromoTrue(Long userPostId);
 }

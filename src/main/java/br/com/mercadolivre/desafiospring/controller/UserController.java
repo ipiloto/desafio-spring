@@ -3,7 +3,6 @@ package br.com.mercadolivre.desafiospring.controller;
 import br.com.mercadolivre.desafiospring.dto.ResponseDTO;
 import br.com.mercadolivre.desafiospring.dto.UserDTO;
 import br.com.mercadolivre.desafiospring.dto.UserFollowersDTO;
-import br.com.mercadolivre.desafiospring.model.User;
 import br.com.mercadolivre.desafiospring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,8 +84,19 @@ public class UserController {
         }
     }
 
+    @GetMapping
+    @RequestMapping("/list")
+    public ResponseEntity listUsers(){
+        try {
+            Iterable<UserDTO> responseDTO = userService.listUsers();
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
     @PostMapping
-    @RequestMapping("/{userId}/make-seller-profile")
+    @RequestMapping("/{userId}/makeSellerProfile")
     public ResponseEntity makeSellerProfile(@PathVariable Long userId) {
         try {
             userService.makeSellerProfile(userId);

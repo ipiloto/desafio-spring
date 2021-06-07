@@ -16,7 +16,7 @@ public abstract class ProductMapper {
         Product product = productDTOtoProduct(productPostDTO.getDetail());
 
         return new Post(productPostDTO.getId_post(), user, product, productPostDTO.getDate(), productPostDTO.getCategory(),
-                productPostDTO.getPrice(), null, null );
+                productPostDTO.getPrice(), productPostDTO.getHasPromo(), productPostDTO.getDiscount());
     }
 
     public static Product productDTOtoProduct(ProductDTO productDTO){
@@ -25,7 +25,8 @@ public abstract class ProductMapper {
     }
 
     public static PostDTO postToPostDTO(Post post){
-        return new PostDTO(post.getUser().getId(), post.getId(), post.getDate(), productToProductDTO(post.getDetail()), post.getCategory(), post.getPrice());
+        return new PostDTO(post.getUser().getId(), post.getId(), post.getDate(), productToProductDTO(post.getDetail()),
+                post.getCategory(), post.getPrice(), post.getHasPromo(), post.getDiscount());
     }
 
     public static List<PostDTO> postsToPostDTOList(List<Post> posts){
@@ -38,8 +39,11 @@ public abstract class ProductMapper {
         return new ProductDTO(product.getId(), product.getName(), product.getType(), product.getBrand(), product.getColor(), product.getNotes());
     }
 
-    public static UserPostsDTO userPostsToUserPostsDTO(Long userId, List<Post> posts) {
-        return new UserPostsDTO(userId, postsToPostDTOList(posts));
+    public static UserPostsDTO userPostsToUserPostsDTO(User user, List<Post> posts) {
+        return new UserPostsDTO(user.getId(), user.getName(), postsToPostDTOList(posts));
     }
 
+    public static UserPostsDTO postToCountPromoPosts(User user, Integer count) {
+        return new UserPostsDTO(user.getId(), user.getName(), count);
+    }
 }

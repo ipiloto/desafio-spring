@@ -75,4 +75,8 @@ public class UserService {
         userRepository.saveAll(UserMapper.usersDTOtoUsersList(usersToCreate));
         return UserMapper.usersToUsersDTOList((List<User>) userRepository.findAll());
     }
+
+    public Iterable<UserDTO> listUsers() {
+        return UserMapper.usersToUsersDTOList((List<User>) userRepository.findAll());
+    }
 }

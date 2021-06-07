@@ -27,6 +27,34 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    @PostMapping
+    @RequestMapping("/newpromopost")
+    public ResponseEntity newPromoPost(@RequestBody PostDTO productPostDTO){
+        return this.newPost(productPostDTO);
+    }
+
+    @GetMapping
+    @RequestMapping("/{userPostId}/countPromo")
+    public ResponseEntity countPromoProducts(@PathVariable Long userPostId){
+        try {
+            UserPostsDTO userPostsDTO = productService.countPromoProducts(userPostId);
+            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping
+    @RequestMapping("/{userPostId}/list")
+    public ResponseEntity listPromoProducts(@PathVariable Long userPostId){
+        try {
+            UserPostsDTO userPostsDTO = productService.listPromoProducts(userPostId);
+            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
     @GetMapping
     @RequestMapping("/posts/{userPostId}/list")
     public ResponseEntity listUserPosts(@PathVariable Long userPostId){

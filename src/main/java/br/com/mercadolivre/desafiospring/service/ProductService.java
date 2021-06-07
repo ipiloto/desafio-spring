@@ -42,7 +42,7 @@ public class ProductService {
 
     public UserPostsDTO listUserPosts(Long userPostId) throws UserNotFoundException, UserIsNotASellerException {
         User user = userService.findValidatingUser(userPostId, true);
-        return ProductMapper.userPostsToUserPostsDTO(user.getId(), user.getPosts());
+        return ProductMapper.userPostsToUserPostsDTO(user, user.getPosts());
     }
 
     public UserPostsDTO listFollowedUsersPostsLastTwoWeeks(Long userId, String[] order) throws UserNotFoundException, UserIsNotASellerException {
@@ -57,7 +57,18 @@ public class ProductService {
         List<Post> postsLastTwoWeeks = postRepository.findAllPostsByUserFollowedUsersAndDateBetween(user.getId(), twoWeeksBefore, today,
                 SortUtil.sortStringToSort(order));
 
-        return ProductMapper.userPostsToUserPostsDTO(user.getId(), postsLastTwoWeeks);
+        return ProductMapper.userPostsToUserPostsDTO(user, postsLastTwoWeeks);
     }
 
+    public UserPostsDTO countPromoProducts(Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = userService.findValidatingUser(userPostId, true);
+        Integer count = postRepository.countByUserIdAndHasPromoTrue(userPostId);
+        return ProductMapper.postToCountPromoPosts(user, count);
+    }
+
+    public UserPostsDTO listPromoProducts(Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
+        User user = userService.findValidatingUser(userPostId, true);
+        List<Post> promoPosts = postRepository.findAllByUserIdAndHasPromoTrue(userPostId);
+        return ProductMapper.userPostsToUserPostsDTO(user, promoPosts);
+    }
 }
