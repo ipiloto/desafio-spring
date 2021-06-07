@@ -6,4 +6,6 @@ public class UserIsNotASellerException extends Exception {
         super(message);
     }
 
+    public UserIsNotASellerException() {
+    }
 }

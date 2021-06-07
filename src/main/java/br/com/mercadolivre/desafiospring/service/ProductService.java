@@ -1,8 +1,9 @@
 package br.com.mercadolivre.desafiospring.service;
 
+import br.com.mercadolivre.desafiospring.dto.PostDTO;
+import br.com.mercadolivre.desafiospring.dto.UserPostsDTO;
 import br.com.mercadolivre.desafiospring.exception.UserIsNotASellerException;
 import br.com.mercadolivre.desafiospring.exception.UserNotFoundException;
-import br.com.mercadolivre.desafiospring.dto.*;
 import br.com.mercadolivre.desafiospring.mappers.ProductMapper;
 import br.com.mercadolivre.desafiospring.model.Post;
 import br.com.mercadolivre.desafiospring.model.User;
@@ -29,7 +30,7 @@ public class ProductService {
     UserService userService;
 
     public void newPost(PostDTO productPostDTO) throws UserNotFoundException, UserIsNotASellerException {
-        User user = userService.findValidatingUser(productPostDTO.getUserId(), true);
+        User user = userService.findValidatingSeller(productPostDTO.getUserId());
 
         Post post = ProductMapper.postDTOtoPost(productPostDTO, user);
 
@@ -41,7 +42,7 @@ public class ProductService {
     }
 
     public UserPostsDTO listUserPosts(Long userPostId) throws UserNotFoundException, UserIsNotASellerException {
-        User user = userService.findValidatingUser(userPostId, true);
+        User user = userService.findValidatingSeller(userPostId);
         return ProductMapper.userPostsToUserPostsDTO(user, user.getPosts());
     }
 
@@ -52,7 +53,7 @@ public class ProductService {
         calendar.add(Calendar.DAY_OF_MONTH, -14);
         Date twoWeeksBefore = calendar.getTime();
 
-        User user = userService.findValidatingUser(userId, false);
+        User user = userService.findValidatingUser(userId);
 
         List<Post> postsLastTwoWeeks = postRepository.findAllPostsByUserFollowedUsersAndDateBetween(user.getId(), twoWeeksBefore, today,
                 SortUtil.sortStringToSort(order));
@@ -61,13 +62,13 @@ public class ProductService {
     }
 
     public UserPostsDTO countPromoProducts(Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
-        User user = userService.findValidatingUser(userPostId, true);
+        User user = userService.findValidatingSeller(userPostId);
         Integer count = postRepository.countByUserIdAndHasPromoTrue(userPostId);
         return ProductMapper.postToCountPromoPosts(user, count);
     }
 
     public UserPostsDTO listPromoProducts(Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
-        User user = userService.findValidatingUser(userPostId, true);
+        User user = userService.findValidatingSeller(userPostId);
         List<Post> promoPosts = postRepository.findAllByUserIdAndHasPromoTrue(userPostId);
         return ProductMapper.userPostsToUserPostsDTO(user, promoPosts);
     }

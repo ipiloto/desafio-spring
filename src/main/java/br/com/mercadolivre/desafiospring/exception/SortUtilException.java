@@ -6,4 +6,6 @@ public class SortUtilException extends RuntimeException {
         super(message);
     }
 
+    public SortUtilException() {
+    }
 }

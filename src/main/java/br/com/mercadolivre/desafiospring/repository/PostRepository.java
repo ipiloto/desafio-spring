@@ -1,8 +1,6 @@
 package br.com.mercadolivre.desafiospring.repository;
 
 import br.com.mercadolivre.desafiospring.model.Post;
-import br.com.mercadolivre.desafiospring.model.Product;
-import br.com.mercadolivre.desafiospring.model.User;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

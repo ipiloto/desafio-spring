@@ -1,8 +1,9 @@
 package br.com.mercadolivre.desafiospring.controller;
 
 import br.com.mercadolivre.desafiospring.dto.PostDTO;
-import br.com.mercadolivre.desafiospring.dto.ResponseDTO;
 import br.com.mercadolivre.desafiospring.dto.UserPostsDTO;
+import br.com.mercadolivre.desafiospring.exception.UserIsNotASellerException;
+import br.com.mercadolivre.desafiospring.exception.UserNotFoundException;
 import br.com.mercadolivre.desafiospring.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,63 +19,43 @@ public class ProductController {
 
     @PostMapping
     @RequestMapping("/newpost")
-    public ResponseEntity newPost(@RequestBody PostDTO productPostDTO){
-        try {
-            productService.newPost(productPostDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
-        }
+    public ResponseEntity newPost(@RequestBody PostDTO productPostDTO) throws UserIsNotASellerException, UserNotFoundException {
+        productService.newPost(productPostDTO);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PostMapping
     @RequestMapping("/newpromopost")
-    public ResponseEntity newPromoPost(@RequestBody PostDTO productPostDTO){
+    public ResponseEntity newPromoPost(@RequestBody PostDTO productPostDTO) throws UserIsNotASellerException, UserNotFoundException {
         return this.newPost(productPostDTO);
     }
 
     @GetMapping
     @RequestMapping("/{userPostId}/countPromo")
-    public ResponseEntity countPromoProducts(@PathVariable Long userPostId){
-        try {
-            UserPostsDTO userPostsDTO = productService.countPromoProducts(userPostId);
-            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
-        }
+    public ResponseEntity countPromoProducts(@PathVariable Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
+        UserPostsDTO userPostsDTO = productService.countPromoProducts(userPostId);
+        return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
     }
 
     @GetMapping
     @RequestMapping("/{userPostId}/list")
-    public ResponseEntity listPromoProducts(@PathVariable Long userPostId){
-        try {
-            UserPostsDTO userPostsDTO = productService.listPromoProducts(userPostId);
-            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
-        }
+    public ResponseEntity listPromoProducts(@PathVariable Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
+        UserPostsDTO userPostsDTO = productService.listPromoProducts(userPostId);
+        return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
     }
 
     @GetMapping
     @RequestMapping("/posts/{userPostId}/list")
-    public ResponseEntity listUserPosts(@PathVariable Long userPostId){
-        try {
-            UserPostsDTO userPostsDTO = productService.listUserPosts(userPostId);
-            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
-        }
+    public ResponseEntity listUserPosts(@PathVariable Long userPostId) throws UserIsNotASellerException, UserNotFoundException {
+        UserPostsDTO userPostsDTO = productService.listUserPosts(userPostId);
+        return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
     }
 
     @GetMapping
     @RequestMapping("/followed/{userId}/list")
-    public ResponseEntity listFollowedUsersPostsLastTwoWeeks(@PathVariable Long userId, @RequestParam(defaultValue = "date_desc") String[] order){
-        try {
-            UserPostsDTO userPostsDTO = productService.listFollowedUsersPostsLastTwoWeeks(userId, order);
-            return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO(e.getMessage()));
-        }
+    public ResponseEntity listFollowedUsersPostsLastTwoWeeks(@PathVariable Long userId, @RequestParam(defaultValue = "date_desc") String[] order) throws UserIsNotASellerException, UserNotFoundException {
+        UserPostsDTO userPostsDTO = productService.listFollowedUsersPostsLastTwoWeeks(userId, order);
+        return ResponseEntity.status(HttpStatus.OK).body(userPostsDTO);
     }
 
 }

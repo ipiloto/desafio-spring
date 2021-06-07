@@ -2,8 +2,8 @@ package br.com.mercadolivre.desafiospring.util;
 
 import br.com.mercadolivre.desafiospring.exception.SortUtilException;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public abstract class SortUtil {
             }
             return Sort.by(orders);
         }catch (Exception e) {
-            throw new SortUtilException("Error in order parameters interpretation.");
+            throw new SortUtilException();
         }
     }
 

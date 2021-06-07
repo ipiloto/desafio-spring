@@ -6,4 +6,6 @@ public class UserNotFoundException extends Exception {
         super(message);
     }
 
+    public UserNotFoundException() {
+    }
 }
